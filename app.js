@@ -10,6 +10,7 @@ server.listen(port, function() {
 
 app.get('/', function(req, res) {
   res.write("Hello, this is smart dictionary team");
+  res.end();
 });
 
 
