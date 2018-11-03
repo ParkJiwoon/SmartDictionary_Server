@@ -1,10 +1,17 @@
 
 var express = require('express');
 var app = express();
+var server = require('http').Server(app);
+var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
 
- app.listen(3000, function () {
-   console.log('http://127.0.0.1:3000 app listening on port 3000!');
- });
+server.listen(port, function() {
+    console.log('Server On!');
+});
+
+app.get('/', function(req, res) {
+  res.send({Capstone:"Smart Dictionary"});
+});
+
 
  
  
