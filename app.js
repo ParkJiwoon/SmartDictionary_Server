@@ -9,7 +9,7 @@ server.listen(port, function() {
 });
 
 app.get('/', function(req, res) {
-  res.send({Capstone:"Smart Dictionary"});
+  res.write("Hello, this is smart dictionary team");
 });
 
 
