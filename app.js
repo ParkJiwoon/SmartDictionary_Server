@@ -1,10 +1,10 @@
 
 var express = require('express');
 var app = express();
-var server = require('http').Server(app);
+// var server = require('http').Server(app);
 var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
 
-server.listen(port, function() {
+app.listen(port, function() {
     console.log('Server On!');
 });
 
