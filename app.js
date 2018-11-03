@@ -5,7 +5,6 @@ var app = express();
 app.get('/', function(req, res) {
   res.write('Capstone 2 team Test');
   res.end();
-  console.log('hello world');
 });
 
  app.listen(3000, function () {
