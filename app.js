@@ -2,11 +2,6 @@
 var express = require('express');
 var app = express();
 
-app.get('/', function(req, res) {
-  res.write('Capstone 2 team Test');
-  res.end();
-});
-
  app.listen(3000, function () {
    console.log('http://127.0.0.1:3000 app listening on port 3000!');
  });
