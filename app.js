@@ -1,7 +1,6 @@
 
 var express = require('express');
 var app = express();
-// var server = require('http').Server(app);
 var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
 
 app.listen(port, function() {
@@ -9,13 +8,45 @@ app.listen(port, function() {
 });
 
 app.get('/', function(req, res) {
-  res.write("Hello, this is smart dictionary team");
-  res.end();
+    res.write("Hello, this is smart dictionary team");
+    res.end();
+});
+
+app.post('/', function(req, res) {
+    var inputData;
+
+    req.on('data', (data) => {
+      inputData = JSON.parse(data);
+      console.log("user_id : "+inputData.user_id + " , name : "+inputData.name);
+    });
+
+    res.write("OK! heroku");
+    res.end();
 });
 
 
+
+// 우리말샘 오픈 API 이용 //
+// var key = 'DCBF129679642CC2140B4946338DEC0C';
+// q = encodeURI('나무');
+// var url = 'https://opendict.korean.go.kr/api/search?&key=' + key + '&q=' + q;
+
+// var request = require('request');
+// var xml2js = require('xml2js');
+
+// var parser = new xml2js.Parser();
+
+// request.get(url, function(err, res, body) {
+//   parser.parseString(body, function(err, result) {
+//     console.log(result.channel.item[0].word[0]);
+//     console.log(result.channel.item[0].sense[0].definition[0]);
+//     console.log(result.channel.item[0].sense[0].link[0]);
+//   });
+// });
+
  
  
+// 네이버 백과사전 오픈 API ///
 // var client_id = 'W8zmbB6bAGyXWmlr7d8O';
 // var client_secret = 'u8yw58ggR8';
 // app.get('/search/encyc', function (req, res) {
