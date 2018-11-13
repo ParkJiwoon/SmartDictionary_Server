@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
+var port = process.env.PORT || 88;  // Heroku에서 사용하는 포트 설정
 
 app.listen(port, function() {
     console.log('Server On!');
