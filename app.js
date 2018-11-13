@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
@@ -13,15 +12,23 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-    var inputData;
-
     req.on('data', (data) => {
-      inputData = JSON.parse(data);
-      console.log("user_id : "+inputData.user_id + " , name : "+inputData.name);
-    });
+      var inputData = JSON.parse(data);
+             
+      /** To do 1. 데이터베이스 쿼리문을 통해 뜻 가져오는 작업 추가 */
 
-    res.write("OK! heroku");
-    res.end();
+      /** To do 2. 사용 빈도 확인을 위해 데이터베이스에 넣는 작업 추가 */
+
+      let words = {
+          word: inputData.word,
+          description: inputData.word + " 뜻",
+          link: "www.naver.com"
+      }
+
+      console.log(words);
+      res.json(words);
+      res.end();
+    });
 });
 
 
