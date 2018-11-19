@@ -85,9 +85,9 @@ app.post('/', function(req, res) {
         /** 단어 저장 */
         usedword.save(function(err) {
             if(err) {
-                // console.log("insert fail");
+
             } else {
-                // console.log(targetWord, "insert success");
+                
             }
         })
     });
