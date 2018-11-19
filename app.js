@@ -55,7 +55,13 @@ app.post('/', function(req, res) {
               res.json(sendWord);
               res.end();
           } else {
-              console.log("no data")          
+              let sendWord = {
+                  word: targetWord,
+                  description: "검색 결과가 없습니다",
+                  link: "no data"
+              }          
+              res.json(sendWord);
+              res.end();
           } 
       });
 
@@ -79,9 +85,9 @@ app.post('/', function(req, res) {
         /** 단어 저장 */
         usedword.save(function(err) {
             if(err) {
-                console.log("insert fail");
+                // console.log("insert fail");
             } else {
-                console.log(targetWord, "insert success");
+                // console.log(targetWord, "insert success");
             }
         })
     });
