@@ -1,10 +1,36 @@
 var express = require('express');
+var mongoose = require('mongoose');
 var app = express();
-var port = process.env.PORT || 88;  // Heroku에서 사용하는 포트 설정
+var port = process.env.PORT || 3000;  // Heroku에서 사용하는 포트 설정
 
 app.listen(port, function() {
     console.log('Server On!');
 });
+
+/** 몽고디비 연결 */
+MONGODB_URI = 'mongodb://heroku_s3p4j43q:b7009me3ku4vig5krar75de0g7@ds151753.mlab.com:51753/heroku_s3p4j43q';
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true}, function(err) {
+    if(err) {
+        console.error('mongodb connection error', err);
+    }
+
+    console.log('mongodb connect');
+});
+
+/** 스키마 생성 */
+var wordSchema = new mongoose.Schema({ 
+    word: String,
+    description: String,
+    link: String
+});
+var usedWordSchema = new mongoose.Schema({ 
+    word: String,
+    date: Number
+});
+
+/** 모델 등록 */
+var Word = mongoose.model('word', wordSchema)
+var UsedWord = mongoose.model('usedword', usedWordSchema);
 
 app.get('/', function(req, res) {
     res.write("Hello, this is smart dictionary team");
@@ -16,98 +42,53 @@ app.post('/', function(req, res) {
       var inputData = JSON.parse(data);
              
       /** To do 1. 데이터베이스 쿼리문을 통해 뜻 가져오는 작업 추가 */
+      var targetWord = inputData.word
+
+      /** 뜻 찾기 */
+      Word.findOne({word: targetWord}, function(err, word) {
+          if(word) {
+              let sendWord = {
+                  word: word.word,
+                  description: word.description,
+                  link: word.link
+              }
+              res.json(sendWord);
+              res.end();
+          } else {
+              console.log("no data")          
+          } 
+      });
 
       /** To do 2. 사용 빈도 확인을 위해 데이터베이스에 넣는 작업 추가 */
+        /** 현재 날짜 생성 */
+        var date = new Date();
 
-      let words = {
-          word: inputData.word,
-          description: inputData.word + " 뜻",
-          link: "www.naver.com"
-      }
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        var day = date.getDate();
 
-      console.log(words);
-      res.json(words);
-      res.end();
+        if(day < 10) {
+            day = "0" + day
+        }
+
+        var usedword = UsedWord({ 
+            word: targetWord,
+            date: eval(year + "" + month + "" + day)
+        })
+
+        /** 단어 저장 */
+        usedword.save(function(err) {
+            if(err) {
+                console.log("insert fail");
+            } else {
+                console.log(targetWord, "insert success");
+            }
+        })
     });
 });
 
 
 
-// 우리말샘 오픈 API 이용 //
-// var key = 'DCBF129679642CC2140B4946338DEC0C';
-// q = encodeURI('나무');
-// var url = 'https://opendict.korean.go.kr/api/search?&key=' + key + '&q=' + q;
 
-// var request = require('request');
-// var xml2js = require('xml2js');
 
-// var parser = new xml2js.Parser();
 
-// request.get(url, function(err, res, body) {
-//   parser.parseString(body, function(err, result) {
-//     console.log(result.channel.item[0].word[0]);
-//     console.log(result.channel.item[0].sense[0].definition[0]);
-//     console.log(result.channel.item[0].sense[0].link[0]);
-//   });
-// });
-
- 
- 
-// 네이버 백과사전 오픈 API ///
-// var client_id = 'W8zmbB6bAGyXWmlr7d8O';
-// var client_secret = 'u8yw58ggR8';
-// app.get('/search/encyc', function (req, res) {
-//    var api_url = 'https://openapi.naver.com/v1/search/encyc?query=' + encodeURI("파이썬"); // json 결과
-//    var request = require('request');
-//    var options = {
-//        url: api_url,
-//        headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
-//     };
-
-//    request.get(options, function (error, response, body) {
-//      if (!error && response.statusCode == 200) {
-//        res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-//        res.end(body);
-       
-//        var result = JSON.parse(body);
-//        console.log("\nlink:", result.items[0].link);
-//        console.log("description:", result.items[0].description);
-//      } else {
-//        res.status(response.statusCode).end();
-//        console.log('error = ' + response.statusCode);
-//      }
-//    });
-//  });
-
-//  app.post('/post', function(req, res) {
-//     console.log('who get in here post /users');
-//     var inputData;
-
-//     req.on('data', function(data) {
-//       var inputStr = "롤챔스"
-//       var api_url = 'https://openapi.naver.com/v1/search/encyc?query=' + encodeURI(inputStr); // json 결과
-//       var request = require('request');
-//       var options = {
-//           url: api_url,
-//           headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
-//        };
-   
-//       request.get(options, function (error, response, body) {
-//         if (!error && response.statusCode == 200) {
-//           // res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-//           // res.end(body);
-          
-//           var result = JSON.parse(body);
-//           inputData = result.items[0].description;
-//           console.log("\nlink:", result.items[0].link);
-//           console.log("description:", result.items[0].description);
-//           res.write(inputData);
-//           res.end();
-//         } else {
-//           res.status(response.statusCode).end();
-//           console.log('error = ' + response.statusCode);
-//         }
-//       });
-//     });
-    
-//  });
